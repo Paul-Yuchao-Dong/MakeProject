@@ -1,3 +1,7 @@
+.PHONEY: all clean
+.DELETE_ON_ERROR:
+.SECONDARY:
+
 all: report.html
 
 clean:
@@ -10,8 +14,8 @@ histogram.tsv: R/histogram.r words.txt
 				Rscript $<
 
 histogram.png: histogram.tsv
-			Rscript -e 'library(ggplot2); qplot(Length, Freq, data = read.delim("$<")); ggsave("histogram.png")'
+			Rscript -e 'library(ggplot2); qplot(Length, Freq, data = read.delim("$<")); ggsave("$@")'
 			rm -f Rplots.pdf
 
-report.html: report.rmd
+report.html: report.rmd histogram.tsv histogram.png
 			Rscript -e 'rmarkdown::render("$<")'
